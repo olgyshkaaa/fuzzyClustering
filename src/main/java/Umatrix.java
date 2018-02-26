@@ -2,7 +2,7 @@
  * Пересчет
  */
 public class Umatrix {
-    private double[][] probabilityMatrix = new double[20][20]; //todo:исправить;
+    private double[][]probabilityMatrix;
 
     public double[][] getProbabilityMatrix() {
         return probabilityMatrix;
@@ -13,20 +13,22 @@ public class Umatrix {
     }
 
     public void calculateUmatrix (int dataNumber, int clusterNumber, int m, double  distanceData[][]){
+        probabilityMatrix = new double[clusterNumber][dataNumber];
         for (int j = 0; j < dataNumber ; j++) {
             for (int i = 0; i < clusterNumber ; i++) {
-                probabilityMatrix[i][j] = Math.pow((1/distanceData[i][j]),(2/(m-1)));
+                probabilityMatrix[i][j] += Math.pow((1/distanceData[i][j]),(2/(m-1)));
             }
         }
-        normalize(dataNumber,clusterNumber);
+        normalize(dataNumber,clusterNumber, probabilityMatrix);
     }
 
-    public void normalize (int dataNumber, int clusterNumber){
+    public void normalize(int dataNumber, int clusterNumber, double[][] probabilityMatrix){
+
         double sum;
         for (int j = 0; j < dataNumber ; j++) {
             sum = 0;
             for (int i = 0; i < clusterNumber ; i++) {
-                sum += probabilityMatrix[clusterNumber][dataNumber];
+                sum += probabilityMatrix[i][j];
             }
             for (int i = 0; i < clusterNumber ; i++) {
                 probabilityMatrix[i][j] /= sum;
