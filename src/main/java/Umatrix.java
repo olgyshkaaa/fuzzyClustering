@@ -3,6 +3,15 @@
  */
 public class Umatrix {
     private double[][]probabilityMatrix;
+    private double[][] centresMatrix;
+
+    public double[][] getCentresMatrix() {
+        return centresMatrix;
+    }
+
+    public void setCentresMatrix(double[][] centresMatrix) {
+        this.centresMatrix = centresMatrix;
+    }
 
     public double[][] getProbabilityMatrix() {
         return probabilityMatrix;
@@ -16,24 +25,30 @@ public class Umatrix {
         probabilityMatrix = new double[clusterNumber][dataNumber];
         for (int j = 0; j < dataNumber ; j++) {
             for (int i = 0; i < clusterNumber ; i++) {
-                probabilityMatrix[i][j] += Math.pow((1/distanceData[i][j]),(2/(m-1)));
+                probabilityMatrix[i][j] = Math.pow((normalize(dataNumber, clusterNumber, distanceData, j) / distanceData[i][j]), (2 / (m - 1)));
             }
         }
-        normalize(dataNumber,clusterNumber, probabilityMatrix);
     }
 
-    public void normalize(int dataNumber, int clusterNumber, double[][] probabilityMatrix){
+    public double normalize(int dataNumber, int clusterNumber, double[][] distanceData, int currentNode) {
 
         double sum;
-        for (int j = 0; j < dataNumber ; j++) {
             sum = 0;
             for (int i = 0; i < clusterNumber ; i++) {
-                sum += probabilityMatrix[i][j];
+                sum += distanceData[i][currentNode];
             }
-            for (int i = 0; i < clusterNumber ; i++) {
-                probabilityMatrix[i][j] /= sum;
-            }
+        return sum;
+    }
 
+    public void calculateCenters(int dataNumber, int clusterNumber, int dimension, int m, double[][] data) {
+        centresMatrix = new double[dimension][clusterNumber];
+        for (int i = 0; i < clusterNumber; i++) {
+            for (int j = 0; j < dataNumber; j++) {
+                for (int k = 0; k < dimension; k++) {
+                    centresMatrix[k][i] = Math.pow(probabilityMatrix[i][j], m) * data[k][i] / dataNumber;
+                }
+
+            }
         }
     }
 }

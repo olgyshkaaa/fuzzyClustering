@@ -6,10 +6,10 @@ import java.util.Random;
  * Генерация исходной матрицы
  */
 public class DataGenerator {
-    private  Integer clusterNumber =20;
-    private  Integer dataNumber = 1000000;
+    private Integer clusterNumber = 3;
+    private Integer dataNumber = 5;
     private double sum;
-    private Integer max = 1000;
+    private Integer max = 100;
     private Integer dimension = 2;
 
     private double[][] probabilityMatrix = new double [clusterNumber][dataNumber];
