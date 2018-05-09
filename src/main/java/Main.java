@@ -1,37 +1,64 @@
-import generator.DataGenerator;
+import clustering.DataGenerator;
+import clustering.DecisionFunction;
+import clustering.EvklidDistance;
+import clustering.UMatrix;
+import lombok.Data;
+
 
 /**
  * Main class
  */
+@Data
 public class Main {
+    //количество кластеров
+    private static final int clusterNumber = 6;
+    //количество начальных точек
+    private static final int dataNumber = 5;
+    //разность данных
+    private static final int dimension = 2;
+    ///ограничение для генерации чисел (диапазон)
+    private static final int dataRange = 100;
+
+    //параметр останова
+    private static final double eps = 0.00003;
+    //экспоненциальный вес
+    private static final int m = 2;
+
+
     public static void main(String[] args) {
-        double eps = 0.00000000000000000003;
-        int m = 2;
-        double u[][];
-        double centres[][];
+        //матрица исходных данных
+        double[][] data;
+        //матрица с центрами кластеров
+        double[][] centres;
+        //матрица с расстояниями до центров
+        double[][] distanceData;
+        //матрица вероятности
+        double[][] probabilityMatrix;
+        //служебные переменные
+        double[][] u;
         double[][] uPrev;
         double max = 100;
         int i = 0;
-        DataGenerator data = new DataGenerator();
-        data.generateProbabilityMatrix();
-        DecisionFunction decisionFunction = new DecisionFunction();
-        EvklidDistance evklidDistance = new EvklidDistance();
-        Umatrix umatrix = new Umatrix();
-        centres = data.getCenters();
 
-        data.generateData();
-        data.generateCenters();
-        uPrev =data.getProbabilityMatrix();
-        while(max > eps && i < 100) {
-            evklidDistance.calculateEvklidDistance(data.getData(), centres,
-                    data.getDimension(), data.getClusterNumber(), data.getDataNumber());
-           umatrix.calculateUmatrix(data.getDataNumber(), data.getClusterNumber(),m, evklidDistance.getDistanceData());
-            u = umatrix.getProbabilityMatrix();
-            max = decisionFunction.calculateDecisionFunction(data.getDataNumber(), data.getClusterNumber(), u, uPrev);
+        //генерация матрицы исходных данных
+        data = DataGenerator.generateData(dataNumber, dimension, dataRange);
+        //генерация матрицы вероятности
+        probabilityMatrix = DataGenerator.generateProbabilityMatrix(dataNumber, clusterNumber);
+
+        /// centres = clustering.DataGenerator.generateCenters(dimension,clusterNumber,dataRange);
+
+
+        uPrev = probabilityMatrix;
+        while (max > eps && i < 10000000) {
+            //генерация изначальных центров кластеров
+            centres = UMatrix.calculateCenters(dataNumber, clusterNumber, dimension, m, data, uPrev);
+            distanceData = EvklidDistance.calculateEvklidDistance(data, centres,
+                    dimension, clusterNumber, dataNumber);
+            u = UMatrix.calculateUMatrix(dataNumber, clusterNumber, m, distanceData);
+            max = DecisionFunction.calculateDecisionFunction(dataNumber, clusterNumber, u, uPrev);
             uPrev = u;
-            umatrix.calculateCenters(data.getDataNumber(), data.getClusterNumber(), data.getDimension(), m, data.getData());
-            centres = umatrix.getCentresMatrix();
             i++;
+
         }
 
         System.out.println(i);

@@ -1,12 +1,14 @@
+package clustering;
+
 import static java.lang.Math.abs;
 
 /**
- * Created by Olga on 2/23/2018.
+ * Класс, который выносит реешение о продолжении расчетов
  */
 public class DecisionFunction {
-    double sum = 0;
 
-    public double calculateDecisionFunction(int dataNumber, int clusterNumber, double[][] u, double[][] uPrev) {
+
+    public static double calculateDecisionFunction(int dataNumber, int clusterNumber, double[][] u, double[][] uPrev) {
         double max = abs(u[0][0] - uPrev[0][0]);
         for (int i = 0; i < clusterNumber; i++) {
             for (int j = 0; j < dataNumber; j++) {
