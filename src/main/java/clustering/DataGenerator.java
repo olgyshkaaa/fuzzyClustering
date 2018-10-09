@@ -21,7 +21,6 @@ public class DataGenerator {
             for (int i = 0; i < clusterNumber; i++) {
                 probabilityMatrix[i][j] /= sum;
             }
-
         }
         return probabilityMatrix;
     }
@@ -30,6 +29,17 @@ public class DataGenerator {
         double[][] data = new double[dimension][dataNumber];
         final Random random = new Random();
         for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dataNumber; j++) {
+                data[i][j] = random.nextInt(dataRange);
+            }
+        }
+        return data;
+    }
+
+    public static int[][] generatePeopleData(int dataNumber, int dataRange) {
+        int[][] data = new int[2][dataNumber];
+        final Random random = new Random();
+        for (int i = 0; i < 2; i++) {
             for (int j = 0; j < dataNumber; j++) {
                 data[i][j] = random.nextInt(dataRange);
             }
@@ -57,5 +67,25 @@ public class DataGenerator {
         }
     }
 
+    public static FinalData[] generateFinalData(double[][] probabilityMatrix, int[][] peopleMatrix, int clusterNumber, int dataNumber) {
+        FinalData[] finalData = new FinalData[clusterNumber];
+        for (int j = 0; j < dataNumber; j++) {
+            double max = probabilityMatrix[0][j];
+            int maxIndex = 0;
+            for (int i = 0; i < clusterNumber; i++) {
+                if (probabilityMatrix[i][j] > max) {
+                    max = probabilityMatrix[i][j];
+                    maxIndex = i;
+                }
+                if (finalData[maxIndex] == null) {
+                    finalData[maxIndex] = new FinalData();
+                }
+                finalData[maxIndex].getWho().add(peopleMatrix[0][j]);
+                finalData[maxIndex].getWhom().add(peopleMatrix[1][j]);
+            }
+
+        }
+        return finalData;
+    }
 
 }
