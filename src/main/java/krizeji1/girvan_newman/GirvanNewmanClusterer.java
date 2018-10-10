@@ -112,7 +112,7 @@ public class GirvanNewmanClusterer implements Clusterer, LongTask {
         }
         int i = 0;
         for (Cluster cluster : result) {
-            System.out.print("Cluster " + i + " :");
+            System.out.print("Group " + i + " :");
             for (Node node : cluster.getNodes()) {
                 System.out.print(node.getId() + ", ");
 

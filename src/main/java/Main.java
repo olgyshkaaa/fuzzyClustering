@@ -66,9 +66,10 @@ public class Main {
 
         }
 
-        System.out.println(i);
         FinalData[] finalData = DataGenerator.generateFinalData(uPrev, people, clusterNumber, dataNumber);
 
+        int index = 0;
+        for (FinalData cluster : finalData) {
         Lookup lookup = Lookup.getDefault();
         ProjectController pc = lookup.lookup(ProjectController.class);
         pc.newProject();
@@ -77,30 +78,39 @@ public class Main {
         GraphController controller = Lookup.getDefault().lookup(GraphController.class);
         GraphModel model = controller.getModel();
         UndirectedGraph graph = model.getUndirectedGraph();
-        System.out.println("all data: " + finalData[0].getWho().size());
-        for (int j = 0; j < finalData[0].getWho().size() && j < finalData[0].getWhom().size(); j++) {
-            Node a = null;
-            Node b = null;
-            if (!contains(graph, finalData[0].getWho().get(j))) {
-                a = createNode(model, graph, finalData[0].getWho().get(j));
-            } else {
-                a = getNode(graph, finalData[0].getWho().get(j));
+            index ++;
+            if(cluster == null) {
+                System.out.println("Cluster" + index + " is empty");
+                return;
             }
-            if (!contains(graph, finalData[0].getWhom().get(j))) {
-                b = createNode(model, graph, finalData[0].getWhom().get(j));
-            } else {
-                b = getNode(graph, finalData[0].getWhom().get(j));
+            else {
+                System.out.println("Cluster" + index + ":");
+            }
+            for (int j = 0; j < cluster.getWho().size() && j < cluster.getWhom().size(); j++) {
+                Node a = null;
+                Node b = null;
+                if (!contains(graph, cluster.getWho().get(j))) {
+                    a = createNode(model, graph, cluster.getWho().get(j));
+                } else {
+                    a = getNode(graph, cluster.getWho().get(j));
+                }
+                if (!contains(graph, cluster.getWhom().get(j))) {
+                    b = createNode(model, graph, cluster.getWhom().get(j));
+                } else {
+                    b = getNode(graph, cluster.getWhom().get(j));
+                }
+
+                createEdge(model, graph, a, b, 2f);
             }
 
-            createEdge(model, graph, a, b, 2f);
+            // When
+            GirvanNewmanClusterer clusterer = new GirvanNewmanClusterer();
+            clusterer.setPreferredNumberOfClusters(3);
+            clusterer.execute(model);
+            // Then
+            Cluster[] clusters = clusterer.getClusters();
         }
 
-        // When
-        GirvanNewmanClusterer clusterer = new GirvanNewmanClusterer();
-        clusterer.setPreferredNumberOfClusters(2);
-        clusterer.execute(model);
-        // Then
-        Cluster[] clusters = clusterer.getClusters();
 
 
     }
